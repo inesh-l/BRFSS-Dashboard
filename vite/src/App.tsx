@@ -13,7 +13,7 @@ import {
 } from "./lib/api";
 import { FileType } from "./lib/types";
 
-import { initialize_duckdb } from "./lib/db/dbinit";
+import { initialize_duckdb } from "./lib/db/dbconn";
 
 import { RiDragMove2Line } from "react-icons/ri";
 
