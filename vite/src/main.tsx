@@ -5,7 +5,5 @@ import './index.css'
 import { getOrUploadFile } from './lib/llm/gemini-functions.ts';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
     <App />
-  </React.StrictMode>,
 )

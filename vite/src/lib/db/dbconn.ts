@@ -5,33 +5,37 @@ import duckdb_wasm_eh from '@duckdb/duckdb-wasm/dist/duckdb-eh.wasm?url';
 import eh_worker from '@duckdb/duckdb-wasm/dist/duckdb-browser-eh.worker.js?url';
 import { Type } from '@apache-arrow/ts'
 
-export async function initialize_duckdb() {
-    const MANUAL_BUNDLES: duckdb.DuckDBBundles = {
-        mvp: {
-            mainModule: duckdb_wasm,
-            mainWorker: mvp_worker,
-        },
-        eh: {
-            mainModule: duckdb_wasm_eh,
-            mainWorker: eh_worker,
-        },
-    };
-    // Select a bundle based on browser checks
-    const bundle = await duckdb.selectBundle(MANUAL_BUNDLES);
-    // Instantiate the asynchronus version of DuckDB-wasm
-    const worker = new Worker(bundle.mainWorker!);
-    const logger = new duckdb.ConsoleLogger();
-    const db = new duckdb.AsyncDuckDB(logger, worker);
-    await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
-    return db;
-}
+type FileFormData = any;
+type SetFileListFunction = (fileList: any) => void;
+type SetTableArrowFunction = (blobResponse: Blob) => void;
+type SetTableListFunction = (tableList: any[]) => void;
+type SelectedCodeType = string;
+type DBEndpointType = string;
 
-export async function execute_query(db: duckdb.AsyncDuckDB, query: string) {
-    const conn = await db.connect();
-    const arrowResult = await conn.query<{ v: Type.Int }>(query);
+export async function execute_query(
+    db: duckdb.AsyncDuckDB | undefined, 
+    query: string,
+    setTableArrow: SetTableArrowFunction,
+    setLlmResult: SetTableArrowFunction,
+    DB_ENDPOINT: DBEndpointType,) 
+    
+    {
 
-    // Convert arrow table to json
-    const result = arrowResult.toArray();
-    return result;
-}
+        const conn = await db.connect();
+        const arrowResult = await conn.query<{ v: Type.Int }>(query);
+
+        // Convert arrow table to json
+        const result = arrowResult.toArray();
+        console.log(result);
+        await conn.close();
+        return result;
+    }
+
+export async function updateTableList(
+    setTableList: SetTableListFunction,
+    DB_ENDPOINT: DBEndpointType,) 
+    {
+        
+
+    }
 

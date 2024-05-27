@@ -4,16 +4,16 @@ import SQLEditor from "./components/SQLEditor";
 import Sider from "./components/Sider";
 import SideSelector from "./components/SideSelector";
 import ModeSelector from "./components/ModeSelector";
+import * as duckdb from '@duckdb/duckdb-wasm';
+import { useDuckDb } from 'duckdb-wasm-kit';
 
 import {
-  excuteQuery,
-  updateTableList,
   updateFileList,
   postNewFile,
 } from "./lib/api";
 import { FileType } from "./lib/types";
 
-import { initialize_duckdb } from "./lib/db/dbconn";
+import { execute_query, updateTableList } from "./lib/db/dbconn";
 
 import { RiDragMove2Line } from "react-icons/ri";
 
@@ -34,15 +34,10 @@ function App() {
     "http://localhost:8000/",
   );
 
-  // initialize DuckDB WASM object
-  let db;
-  useEffect(() => {
-    const init_db = async () => {
-      db = initialize_duckdb();
-      console.log(db);
-    }
-    init_db();
-  }, []) 
+  const { db, loading, error } = useDuckDb();
+  if (db) {
+    console.log(db);
+  }
 
   // update DB_ENDPOINT when isLocal changes
   useEffect(() => {
@@ -73,7 +68,7 @@ function App() {
     if (!selectedCode) return;
     toast
       .promise(
-        excuteQuery(selectedCode, setArrowFile, setLlmResult, DB_ENDPOINT),
+        execute_query(db, selectedCode, setArrowFile, setLlmResult, DB_ENDPOINT),
         {
           pending: "Excuting ...",
           success: "Excuted 👌",

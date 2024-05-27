@@ -18,6 +18,7 @@
     "@mui/material": "^5.15.10",
     "dotenv": "^16.4.5",
     "duckdb": "^0.10.2",
+    "duckdb-wasm-kit": "^0.1.32",
     "react": "^18.2.0",
     "react-ace": "^10.1.0",
     "react-dom": "^18.2.0",
