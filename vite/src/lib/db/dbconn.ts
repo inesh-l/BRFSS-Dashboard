@@ -3,7 +3,7 @@ import duckdb_wasm from '@duckdb/duckdb-wasm/dist/duckdb-mvp.wasm?url';
 import mvp_worker from '@duckdb/duckdb-wasm/dist/duckdb-browser-mvp.worker.js?url';
 import duckdb_wasm_eh from '@duckdb/duckdb-wasm/dist/duckdb-eh.wasm?url';
 import eh_worker from '@duckdb/duckdb-wasm/dist/duckdb-browser-eh.worker.js?url';
-import { Type } from '@apache-arrow/ts'
+import * as arrow from 'apache-arrow';
 
 type FileFormData = any;
 type SetFileListFunction = (fileList: any) => void;
@@ -22,7 +22,7 @@ export async function execute_query(
     {
 
         const conn = await db.connect();
-        const arrowResult = await conn.query<{ v: Type.Int }>(query);
+        const arrowResult = await conn.query<{ v: arrow.Int }>(query);
 
         // Convert arrow table to json
         const result = arrowResult.toArray();
@@ -32,10 +32,13 @@ export async function execute_query(
     }
 
 export async function updateTableList(
+    db: duckdb.AsyncDuckDB | undefined,
     setTableList: SetTableListFunction,
     DB_ENDPOINT: DBEndpointType,) 
     {
-        
-
+        const conn = await db.connect();
+        const arrowResult = await conn.query<{v: arrow.Int}>('SHOW TABLES;')
+        const result = arrowResult.toArray().map((row) => row.name);
+        setTableList(result);
     }
 

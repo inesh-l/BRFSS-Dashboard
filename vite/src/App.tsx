@@ -50,7 +50,7 @@ function App() {
 
   // updateTableList & updateFileList when DB_ENDPOINT changes
   useEffect(() => {
-    toast.promise(updateTableList(setTableList, DB_ENDPOINT), {
+    toast.promise(updateTableList(db, setTableList, DB_ENDPOINT), {
       pending: "Updating Table List ...",
       success: "Table List Updated 👌",
       error: "Failed 🤯",
@@ -81,7 +81,7 @@ function App() {
           selectedCode.toLowerCase().includes("create") ||
           selectedCode.toLowerCase().includes("drop")
         ) {
-          toast.promise(updateTableList(setTableList, DB_ENDPOINT), {
+          toast.promise(updateTableList(db, setTableList, DB_ENDPOINT), {
             pending: "Updating Table List ...",
             success: "Table List Updated 👌",
             error: "Failed 🤯",
