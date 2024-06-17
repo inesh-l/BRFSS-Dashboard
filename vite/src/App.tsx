@@ -4,16 +4,17 @@ import SQLEditor from "./components/SQLEditor";
 import Sider from "./components/Sider";
 import SideSelector from "./components/SideSelector";
 import ModeSelector from "./components/ModeSelector";
-import * as duckdb from '@duckdb/duckdb-wasm';
 import { useDuckDb } from 'duckdb-wasm-kit';
 
 import {
+  excuteQuery,
   updateFileList,
   postNewFile,
+  updateTableList,
 } from "./lib/api";
 import { FileType } from "./lib/types";
 
-import { execute_query, updateTableList } from "./lib/db/dbconn";
+import { execute_query } from "./lib/db/dbconn";
 
 import { RiDragMove2Line } from "react-icons/ri";
 
@@ -21,6 +22,7 @@ import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import GUIView from "./components/GUIView";
 
 function App() {
   const [arrowFile, setArrowFile] = useState<Blob | null>(null);
@@ -33,6 +35,7 @@ function App() {
   const [DB_ENDPOINT, setDB_ENDPOINT] = useState<string>(
     "http://localhost:8000/",
   );
+  const [GUIMode, setGUIMode] = useState<boolean>(true); // false for SQL input, true for GUI
 
   const { db, loading, error } = useDuckDb();
   if (db) {
@@ -50,7 +53,7 @@ function App() {
 
   // updateTableList & updateFileList when DB_ENDPOINT changes
   useEffect(() => {
-    toast.promise(updateTableList(db, setTableList, DB_ENDPOINT), {
+    toast.promise(updateTableList(setTableList, DB_ENDPOINT), {
       pending: "Updating Table List ...",
       success: "Table List Updated 👌",
       error: "Failed 🤯",
@@ -68,7 +71,7 @@ function App() {
     if (!selectedCode) return;
     toast
       .promise(
-        execute_query(db, selectedCode, setArrowFile, setLlmResult, DB_ENDPOINT),
+        excuteQuery(selectedCode, setArrowFile, setLlmResult, DB_ENDPOINT),
         {
           pending: "Excuting ...",
           success: "Excuted 👌",
@@ -81,7 +84,7 @@ function App() {
           selectedCode.toLowerCase().includes("create") ||
           selectedCode.toLowerCase().includes("drop")
         ) {
-          toast.promise(updateTableList(db, setTableList, DB_ENDPOINT), {
+          toast.promise(updateTableList(setTableList, DB_ENDPOINT), {
             pending: "Updating Table List ...",
             success: "Table List Updated 👌",
             error: "Failed 🤯",
@@ -134,9 +137,9 @@ function App() {
         </PanelResizeHandle>
         <Panel>
           <PanelGroup direction="vertical">
-            <ModeSelector />
+            <ModeSelector setGUIMode={setGUIMode}/>
             <Panel defaultSize={55} minSize={5}>
-              <SQLEditor setSelectedCode={setSelectedCode} />
+              {GUIMode ? <GUIView /> : <SQLEditor setSelectedCode={setSelectedCode} />}
             </Panel>
             <PanelResizeHandle className=" border-y text-sm">
               <RiDragMove2Line className=" w-full items-center justify-center text-gray-500" />

@@ -17,6 +17,7 @@
     "@google/generative-ai": "^0.11.3",
     "@mui/material": "^5.15.10",
     "apache-arrow": "^16.1.0",
+    "axios": "^1.7.2",
     "dotenv": "^16.4.5",
     "duckdb": "^0.10.2",
     "duckdb-wasm-kit": "^0.1.32",
