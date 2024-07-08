@@ -37,8 +37,10 @@ export async function updateTableList(
     DB_ENDPOINT: DBEndpointType,) 
     {
         const conn = await db.connect();
+        console.log("Tables being updated")
         const arrowResult = await conn.query<{v: arrow.Int}>('SHOW TABLES;')
         const result = arrowResult.toArray().map((row) => row.name);
+        console.log(result);
         setTableList(result);
     }
 

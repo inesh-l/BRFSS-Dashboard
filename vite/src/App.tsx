@@ -10,11 +10,10 @@ import {
   excuteQuery,
   updateFileList,
   postNewFile,
-  updateTableList,
 } from "./lib/api";
 import { FileType } from "./lib/types";
 
-import { execute_query } from "./lib/db/dbconn";
+import { execute_query, updateTableList } from "./lib/db/dbconn";
 
 import { RiDragMove2Line } from "react-icons/ri";
 
@@ -42,18 +41,18 @@ function App() {
     console.log(db);
   }
 
-  // update DB_ENDPOINT when isLocal changes
-  useEffect(() => {
-    if (isLocal) {
-      setDB_ENDPOINT("http://localhost:8000/");
-    } else {
-      setDB_ENDPOINT("https://duckdb-render.onrender.com/");
-    }
-  }, [isLocal]);
+  // // update DB_ENDPOINT when isLocal changes
+  // useEffect(() => {
+  //   if (isLocal) {
+  //     setDB_ENDPOINT("http://localhost:8000/");
+  //   } else {
+  //     setDB_ENDPOINT("https://duckdb-render.onrender.com/");
+  //   }
+  // }, [isLocal]);
 
   // updateTableList & updateFileList when DB_ENDPOINT changes
   useEffect(() => {
-    toast.promise(updateTableList(setTableList, DB_ENDPOINT), {
+    toast.promise(updateTableList(db, setTableList, DB_ENDPOINT), {
       pending: "Updating Table List ...",
       success: "Table List Updated 👌",
       error: "Failed 🤯",
@@ -71,7 +70,7 @@ function App() {
     if (!selectedCode) return;
     toast
       .promise(
-        excuteQuery(selectedCode, setArrowFile, setLlmResult, DB_ENDPOINT),
+        execute_query(db, selectedCode, setArrowFile, setLlmResult, DB_ENDPOINT),
         {
           pending: "Excuting ...",
           success: "Excuted 👌",
@@ -84,7 +83,7 @@ function App() {
           selectedCode.toLowerCase().includes("create") ||
           selectedCode.toLowerCase().includes("drop")
         ) {
-          toast.promise(updateTableList(setTableList, DB_ENDPOINT), {
+          toast.promise(updateTableList(db, setTableList, DB_ENDPOINT), {
             pending: "Updating Table List ...",
             success: "Table List Updated 👌",
             error: "Failed 🤯",
