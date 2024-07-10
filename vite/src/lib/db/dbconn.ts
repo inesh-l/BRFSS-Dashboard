@@ -7,7 +7,8 @@ import * as arrow from 'apache-arrow';
 
 type FileFormData = any;
 type SetFileListFunction = (fileList: any) => void;
-type SetTableArrowFunction = (blobResponse: Blob) => void;
+type SetTableArrowFunction = (data: any[]) => void;
+type SetLlmResultFunction = (data: Blob) => void;
 type SetTableListFunction = (tableList: any[]) => void;
 type SelectedCodeType = string;
 type DBEndpointType = string;
@@ -16,18 +17,18 @@ export async function execute_query(
     db: duckdb.AsyncDuckDB | undefined, 
     query: string,
     setTableArrow: SetTableArrowFunction,
-    setLlmResult: SetTableArrowFunction,
+    setLlmResult: SetLlmResultFunction,
     DB_ENDPOINT: DBEndpointType,) 
     
     {
 
         const conn = await db.connect();
         const arrowResult = await conn.query<{ v: arrow.Int }>(query);
-
         // Convert arrow table to json
-        const result = arrowResult.toArray();
+        const result = arrowResult.toArray().map((row) => row.toJSON());
         console.log(result);
         await conn.close();
+        setTableArrow(result);
         return result;
     }
 
@@ -41,6 +42,7 @@ export async function updateTableList(
         const arrowResult = await conn.query<{v: arrow.Int}>('SHOW TABLES;')
         const result = arrowResult.toArray().map((row) => row.name);
         console.log(result);
+        console.log(arrowResult);
         setTableList(result);
     }
 

@@ -4,12 +4,12 @@ import { useEffect } from "react";
 
 const WORKER: any = perspective.worker();
 
-export default function Perspective({ arrowFile }: { arrowFile: Blob | null }) {
+export default function Perspective({ arrowFile }: { arrowFile: any | null }) {
   useEffect(() => {
     if (!arrowFile) return;
     const loadPerspectiveViewer = async () => {
       // const resp = await arrowFile;
-      const arrow = await arrowFile.arrayBuffer();
+      const arrow = arrowFile;
       const viewerElement = document.querySelectorAll("perspective-viewer");
 
       if (viewerElement && viewerElement.length === 1) {

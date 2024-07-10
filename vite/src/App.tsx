@@ -24,7 +24,7 @@ import "react-toastify/dist/ReactToastify.css";
 import GUIView from "./components/GUIView";
 
 function App() {
-  const [arrowFile, setArrowFile] = useState<Blob | null>(null);
+  const [arrowFile, setArrowFile] = useState<any[] | null>(null);
   const [llmResult, setLlmResult] = useState<Blob | null>(null);
   const [fileList, setFileList] = useState<FileType[]>([]);
   const [tableList, setTableList] = useState<string[]>([]);
@@ -144,7 +144,7 @@ function App() {
               <RiDragMove2Line className=" w-full items-center justify-center text-gray-500" />
             </PanelResizeHandle>
             <Panel defaultSize={35} minSize={5}>
-              <Perspective arrowFile={arrowFile as Blob | null} />
+              <Perspective arrowFile={arrowFile} />
             </Panel>
           </PanelGroup>
         </Panel>
