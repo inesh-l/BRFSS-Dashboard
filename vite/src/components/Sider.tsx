@@ -12,11 +12,12 @@ import rehypeHighlight from "rehype-highlight";
 type SiderProps = {
   fileList: { id: string; file: string }[];
   tableList: string[];
-  llmResult: Blob | null;
+  llmResult: string | null;
   setFileList: (fileList: { id: string; file: string }[]) => void;
   setFileFormData: (formData: FormData) => void;
   isLocal: boolean;
   setIsLocal: (isLocal: boolean) => void;
+  setLlmResult: (text: string) => void;
   DB_ENDPOINT: string;
 };
 
@@ -28,6 +29,7 @@ export default function Sider({
   setFileFormData,
   isLocal,
   setIsLocal,
+  setLlmResult,
   DB_ENDPOINT,
 }: SiderProps) {
   const label = { inputProps: { "aria-label": "Switch demo" } };
@@ -45,17 +47,7 @@ export default function Sider({
   // load llm result
   useEffect(() => {
     if (!llmResult) return;
-    const loadLLMResult = async () => {
-      const arrow = await llmResult.arrayBuffer();
-      const table = tableFromIPC(arrow);
-      const llmColumn = table.getChild("llm");
-      if (llmColumn) {
-        const data = llmColumn.toArray();
-        console.log(data);
-        setLlmString(data.join("\n"));
-      }
-    };
-    loadLLMResult().catch((error) => console.warn("error", error));
+    setLlmString(llmResult)
   }, [llmResult]);
 
   return (

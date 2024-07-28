@@ -5,7 +5,6 @@ import Sider from "./components/Sider";
 import SideSelector from "./components/SideSelector";
 import ModeSelector from "./components/ModeSelector";
 import { useDuckDb } from 'duckdb-wasm-kit';
-
 import {
   excuteQuery,
   updateFileList,
@@ -25,7 +24,7 @@ import GUIView from "./components/GUIView";
 
 function App() {
   const [arrowFile, setArrowFile] = useState<any[] | null>(null);
-  const [llmResult, setLlmResult] = useState<Blob | null>(null);
+  const [llmResult, setLlmResult] = useState<string | null>(null);
   const [fileList, setFileList] = useState<FileType[]>([]);
   const [tableList, setTableList] = useState<string[]>([]);
   const [selectedCode, setSelectedCode] = useState<string>("");
@@ -34,6 +33,8 @@ function App() {
   const [DB_ENDPOINT, setDB_ENDPOINT] = useState<string>(
     "http://localhost:8000/",
   );
+  const [files, setFiles] = useState<File[]>();
+  
   const [GUIMode, setGUIMode] = useState<boolean>(true); // false for SQL input, true for GUI
 
   const { db, loading, error } = useDuckDb();
@@ -128,6 +129,7 @@ function App() {
             setFileFormData={setFileFormData}
             isLocal={isLocal}
             setIsLocal={setIsLocal}
+            setLlmResult={setLlmResult}
             DB_ENDPOINT={DB_ENDPOINT}
           />
         </Panel>

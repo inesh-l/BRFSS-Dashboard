@@ -3,6 +3,7 @@ type SetFileListFunction = (fileList: any) => void;
 type SetTableArrowFunction = (blobResponse: Blob) => void;
 type SetTableListFunction = (tableList: any[]) => void;
 type SelectedCodeType = string;
+type SetLlmResultFunction = (text: string) => void;
 type DBEndpointType = string;
 
 export async function postNewFile(
@@ -29,7 +30,7 @@ export async function postNewFile(
 export async function excuteQuery(
   selectedCode: SelectedCodeType,
   setTableArrow: SetTableArrowFunction,
-  setLlmResult: SetTableArrowFunction,
+  setLlmResult: SetLlmResultFunction,
   DB_ENDPOINT: DBEndpointType,
 ): Promise<void> {
   await fetch(`${DB_ENDPOINT}duckduck/execute-query/`, {
