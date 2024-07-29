@@ -4,14 +4,16 @@ import { FaFileArrowUp } from "react-icons/fa6";
 
 type DropFileProps = {
   setFileFormData: (formData: FormData) => void;
+  files: File[];
 };
 
-export default function DropFile({ setFileFormData }: DropFileProps) {
+export default function DropFile({ setFileFormData, files }: DropFileProps) {
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       let newFormData = new FormData();
       newFormData.append("file", acceptedFiles[0]);
       setFileFormData(newFormData);
+      files.push(...acceptedFiles);
     },
     [setFileFormData],
   );

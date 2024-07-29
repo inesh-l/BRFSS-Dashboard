@@ -33,8 +33,7 @@ function App() {
   const [DB_ENDPOINT, setDB_ENDPOINT] = useState<string>(
     "http://localhost:8000/",
   );
-  const [files, setFiles] = useState<File[]>();
-  
+  const [files, setFiles] = useState<File[]>([]);
   const [GUIMode, setGUIMode] = useState<boolean>(true); // false for SQL input, true for GUI
 
   const { db, loading, error } = useDuckDb();
@@ -96,11 +95,12 @@ function App() {
   // upload file and refresh file list
   useEffect(() => {
     if (!fileFormData) return;
-    toast.promise(postNewFile(fileFormData, setFileList, DB_ENDPOINT), {
+    toast.promise(postNewFile(setFiles, fileFormData, setFileList, DB_ENDPOINT), {
       pending: "Uploading New File ...",
       success: "New File Uploaded 👌",
       error: "Failed 🤯",
     });
+    console.log(files);
   }, [fileFormData]);
 
   return (
@@ -130,6 +130,7 @@ function App() {
             isLocal={isLocal}
             setIsLocal={setIsLocal}
             setLlmResult={setLlmResult}
+            files={files}
             DB_ENDPOINT={DB_ENDPOINT}
           />
         </Panel>

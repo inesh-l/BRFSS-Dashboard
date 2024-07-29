@@ -5,8 +5,10 @@ type SetTableListFunction = (tableList: any[]) => void;
 type SelectedCodeType = string;
 type SetLlmResultFunction = (text: string) => void;
 type DBEndpointType = string;
+type SetFilesType = (fileList: any[]) => void;
 
 export async function postNewFile(
+  setFiles: SetFilesType,
   fileFormData: FileFormData,
   setFileList: SetFileListFunction,
   DB_ENDPOINT: DBEndpointType,
