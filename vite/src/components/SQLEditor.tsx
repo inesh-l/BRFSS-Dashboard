@@ -53,31 +53,13 @@ export default function SQLEditor({ setSelectedCode }: SQLEditorProps) {
   );
 }
 
-const exampleCode = `/*
-________________________________________________________________________________
-                        __  ____/___  _/__  __ \\__  __ \\
-                        _  / __  __  / __  / / /_  / / /
-                        / /_/ / __/ /  _  /_/ /_  /_/ / 
-________________________\\____/  /___/  /_____/ /_____/__________________________
-                                                                    
-WARNING Remote Mode is slow & need time to spin up & your should delete files and tables before leaving
-
-Default Mode is Local Mode, you need to run your own backend and access this page again. To run in docker: 
-- docker run -p 8000:8000 -it tshogx/duckdb-render
-
-To Excute: CTRL + Enter (Windows/Linux) / CMD + Enter (Mac OS)
-
-*/
-
-
--- LLM Demo
-
--- 1. upload description file for RAG 
-CREATE TABLE ohbrfss22 AS SELECT * FROM 'media/files/ohbrfss22.csv';
+const exampleCode = `-- 1. upload description file for RAG 
+CREATE TABLE ohbrfss22 AS SELECT * FROM 'ohbrfss22.csv';
 SELECT * FROM ohbrfss22;
 
 -- 2. ask question and llm will pick related labels (sql, visualization type, ...)
--- llm: how does income related to health?
+-- llm: How does income relate to health?
+-- llm: Can we predict INCOME3 from AGE
 
 -- 3. visualize according to its suggestions
 SELECT INCOME3, GENHLTH FROM "ohbrfss22";
@@ -96,7 +78,7 @@ SHOW TABLES;
 DROP TABLE my_table;
 
 -- Local File Read
-SELECT * FROM read_csv_auto('media/files/uploaded.csv');
+SELECT * FROM read_csv_auto('uploaded.csv');
 
 -- Remote Parquet scans:
 SELECT * FROM 'https://shell.duckdb.org/data/tpch/0_01/parquet/orders.parquet' LIMIT 1000;

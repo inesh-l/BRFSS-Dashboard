@@ -1,6 +1,5 @@
 import { toast } from "react-toastify";
 import Switch from "@mui/material/Switch";
-import { deleteFile } from "../lib/api";
 import DropFile from "./DropFile";
 import { tableFromIPC } from "apache-arrow";
 
@@ -8,16 +7,16 @@ import { RiDeleteBin5Fill } from "react-icons/ri";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
+import { AsyncDuckDB } from "duckdb-wasm-kit";
 
 type SiderProps = {
-  fileList: { id: string; file: string }[];
+  fileList: string[];
   tableList: string[];
-  llmResult: Blob | null;
+  llmResult: string | null;
   setFileList: (fileList: { file: string }[]) => void;
   setFileFormData: (formData: FormData) => void;
-  isLocal: boolean;
-  setIsLocal: (isLocal: boolean) => void;
   files: File[];
+  db: AsyncDuckDB;
   DB_ENDPOINT: string;
 };
 
@@ -27,23 +26,12 @@ export default function Sider({
   llmResult,
   setFileList,
   setFileFormData,
-  isLocal,
-  setIsLocal,
-  setLlmResult,
   files,
-  DB_ENDPOINT,
+  db,
 }: SiderProps) {
   const label = { inputProps: { "aria-label": "Switch demo" } };
   const [llmstring, setLlmString] = useState<string>("");
 
-  // delete file and refresh file list
-  const handleDelete = async (fileId: string) => {
-    toast.promise(deleteFile(fileId, setFileList, DB_ENDPOINT), {
-      pending: "Deleting ...",
-      success: "Deleted 👌",
-      error: "Failed 🤯",
-    });
-  };
 
   // load llm result
   useEffect(() => {
@@ -59,7 +47,6 @@ export default function Sider({
           {fileList.map((file) => (
             <li
               className=" flex w-full items-center justify-between gap-1"
-              key={file.id}
             >
               <button
                 onClick={(e) => {
@@ -71,12 +58,9 @@ export default function Sider({
                   toast("Copied to clipboard");
                 }}
               >
-                {file.file.split("/").pop()}
+                {file}
               </button>
               <div className=" mt-1 flex gap-2">
-                <button onClick={() => handleDelete(file.id)}>
-                  <RiDeleteBin5Fill />
-                </button>
               </div>
             </li>
           ))}
@@ -116,19 +100,7 @@ export default function Sider({
       </div>
       <div>
         <div className="flex items-center justify-between space-x-4 text-gray-500">
-          <div className=" flex flex-row ">
-            <div className=" my-auto">
-              Run In {isLocal ? "Local" : "Remote"}
-            </div>
-            <Switch
-              {...label}
-              defaultChecked
-              onChange={() => {
-                setIsLocal(!isLocal);
-              }}
-            />
-          </div>
-          <DropFile setFileFormData={setFileFormData} files={files}/>
+        <DropFile setFileFormData={setFileFormData} files={files} fileList={fileList} db={db}/>
         </div>
       </div>
     </div>

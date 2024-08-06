@@ -5,12 +5,6 @@ import Sider from "./components/Sider";
 import SideSelector from "./components/SideSelector";
 import ModeSelector from "./components/ModeSelector";
 import { useDuckDb } from 'duckdb-wasm-kit';
-import {
-  excuteQuery,
-  updateFileList,
-  postNewFile,
-} from "./lib/api";
-import { FileType } from "./lib/types";
 
 import { execute_query, updateTableList } from "./lib/db/dbconn";
 
@@ -25,14 +19,10 @@ import GUIView from "./components/GUIView";
 function App() {
   const [arrowFile, setArrowFile] = useState<any[] | null>(null);
   const [llmResult, setLlmResult] = useState<string | null>(null);
-  const [fileList, setFileList] = useState<FileType[]>([]);
+  const [fileList, setFileList] = useState<string[]>([]);
   const [tableList, setTableList] = useState<string[]>([]);
   const [selectedCode, setSelectedCode] = useState<string>("");
   const [fileFormData, setFileFormData] = useState<FormData | null>(null);
-  const [isLocal, setIsLocal] = useState<boolean>(true);
-  const [DB_ENDPOINT, setDB_ENDPOINT] = useState<string>(
-    "http://localhost:8000/",
-  );
   const [files, setFiles] = useState<File[]>([]);
   const [GUIMode, setGUIMode] = useState<boolean>(true); // false for SQL input, true for GUI
 
@@ -41,36 +31,13 @@ function App() {
     console.log(db);
   }
 
-  // // update DB_ENDPOINT when isLocal changes
-  // useEffect(() => {
-  //   if (isLocal) {
-  //     setDB_ENDPOINT("http://localhost:8000/");
-  //   } else {
-  //     setDB_ENDPOINT("https://duckdb-render.onrender.com/");
-  //   }
-  // }, [isLocal]);
-
-  // updateTableList & updateFileList when DB_ENDPOINT changes
-  useEffect(() => {
-    toast.promise(updateTableList(db, setTableList, DB_ENDPOINT), {
-      pending: "Updating Table List ...",
-      success: "Table List Updated 👌",
-      error: "Failed 🤯",
-    });
-    toast.promise(updateFileList(setFileList, DB_ENDPOINT), {
-      pending: "Updating File List ...",
-      success: "File List Updated 👌",
-      error: "Failed 🤯",
-    });
-    console.log("DB_ENDPOINT", DB_ENDPOINT);
-  }, [DB_ENDPOINT]);
 
   // excuteQuery & updateTableList when send selectedCode
   useEffect(() => {
     if (!selectedCode) return;
     toast
       .promise(
-        execute_query(db, selectedCode, setArrowFile, setLlmResult, DB_ENDPOINT),
+        execute_query(db, selectedCode, setArrowFile, setLlmResult),
         {
           pending: "Excuting ...",
           success: "Excuted 👌",
@@ -83,7 +50,7 @@ function App() {
           selectedCode.toLowerCase().includes("create") ||
           selectedCode.toLowerCase().includes("drop")
         ) {
-          toast.promise(updateTableList(db, setTableList, DB_ENDPOINT), {
+          toast.promise(updateTableList(db, setTableList), {
             pending: "Updating Table List ...",
             success: "Table List Updated 👌",
             error: "Failed 🤯",
@@ -92,16 +59,7 @@ function App() {
       });
   }, [selectedCode]);
 
-  // upload file and refresh file list
-  useEffect(() => {
-    if (!fileFormData) return;
-    toast.promise(postNewFile(setFiles, fileFormData, setFileList, DB_ENDPOINT), {
-      pending: "Uploading New File ...",
-      success: "New File Uploaded 👌",
-      error: "Failed 🤯",
-    });
-    console.log(files);
-  }, [fileFormData]);
+
 
   return (
     <>
@@ -127,11 +85,8 @@ function App() {
             llmResult={llmResult}
             setFileList={setFileList}
             setFileFormData={setFileFormData}
-            isLocal={isLocal}
-            setIsLocal={setIsLocal}
-            setLlmResult={setLlmResult}
             files={files}
-            DB_ENDPOINT={DB_ENDPOINT}
+            db={db}
           />
         </Panel>
         <PanelResizeHandle className=" border-x text-sm">
@@ -141,7 +96,7 @@ function App() {
           <PanelGroup direction="vertical">
             <ModeSelector setGUIMode={setGUIMode}/>
             <Panel defaultSize={55} minSize={5}>
-              {GUIMode ? <GUIView /> : <SQLEditor setSelectedCode={setSelectedCode} />}
+              {GUIMode ? <GUIView setSelectedCode={setSelectedCode} /> : <SQLEditor setSelectedCode={setSelectedCode} />}
             </Panel>
             <PanelResizeHandle className=" border-y text-sm">
               <RiDragMove2Line className=" w-full items-center justify-center text-gray-500" />

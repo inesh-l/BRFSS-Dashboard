@@ -1,3 +1,4 @@
+import { AsyncDuckDB } from "duckdb-wasm-kit";
 import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { FaFileArrowUp } from "react-icons/fa6";
@@ -5,15 +6,19 @@ import { FaFileArrowUp } from "react-icons/fa6";
 type DropFileProps = {
   setFileFormData: (formData: FormData) => void;
   files: File[];
+  fileList: string[];
+  db: AsyncDuckDB;
 };
 
-export default function DropFile({ setFileFormData, files }: DropFileProps) {
+export default function DropFile({ setFileFormData, files, fileList, db }: DropFileProps) {
   const onDrop = useCallback(
-    (acceptedFiles: File[]) => {
-      let newFormData = new FormData();
-      newFormData.append("file", acceptedFiles[0]);
-      setFileFormData(newFormData);
-      files.push(...acceptedFiles);
+     async (acceptedFiles: File[]) => {
+      for (let i = 0; i < acceptedFiles.length; i++) {
+        console.log(acceptedFiles[i]);
+        const fileText = await acceptedFiles[i].text();
+        fileList.push(acceptedFiles[i].name);
+        db.registerFileText(acceptedFiles[i].name, fileText);
+      }
     },
     [setFileFormData],
   );

@@ -13,8 +13,7 @@ export async function execute_query(
     db: duckdb.AsyncDuckDB | undefined, 
     query: string,
     setTableArrow: SetTableArrowFunction,
-    setLlmResult: SetLlmResultFunction,
-    DB_ENDPOINT: DBEndpointType,) 
+    setLlmResult: SetLlmResultFunction,) 
     
     {
         if (query.startsWith("-- llm: ")) {
@@ -33,8 +32,7 @@ export async function execute_query(
 
 export async function updateTableList(
     db: duckdb.AsyncDuckDB | undefined,
-    setTableList: SetTableListFunction,
-    DB_ENDPOINT: DBEndpointType,) 
+    setTableList: SetTableListFunction,) 
     {
         const conn = await db.connect();
         console.log("Tables being updated")

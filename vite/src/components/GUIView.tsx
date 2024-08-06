@@ -1,102 +1,112 @@
 import React, { useState } from 'react';
+import 'tailwindcss/tailwind.css';
 
-export default function GUIView(props: React.PropsWithChildren){
-  const [state, setState] = useState('');
-  const [geostratum, setGeostratum] = useState('');
-  const [density, setDensity] = useState('');
-  const [year, setYear] = useState([2000, 2024]);
-  const [searchText, setSearchText] = useState('');
+const data = {
+  numericalAttributes: [
+    { name: 'Age', min: 0, max: 100 },
+    { name: 'Income', min: 0, max: 200000 },
+    { name: 'NumDaysPoorHealth', min: 0, max: 30 },
+  ],
+  categoricalAttributes: [
+    { name: 'State', options: ['Ohio', 'California', 'New York'] },
+    { name: 'Education', options: ['High School', 'Bachelor', 'Master', 'PhD'] },
+    { name: 'Gender', options: ['Male', 'Female'] },
+  ],
+  textAttributes: ['Occupation']
+};
 
-  const handleSliderChange = (event: any) => {
-    const value = event.target.value.split(',');
-    setYear([Number(value[0]), Number(value[1])]);
+const GUIView = () => {
+  const [filters, setFilters] = useState({
+    Age: [0, 100],
+    Income: [0, 200000],
+    State: '',
+    Education: '',
+    Occupation: '',
+    NumDaysPoorHealth: '',
+    Gender: ''
+  });
+
+  const handleSliderChange = (name, values) => {
+    setFilters((prevFilters) => ({ ...prevFilters, [name]: values }));
   };
 
-  const handleSubmit = (event: any) => {
-    event.preventDefault();
-    // Handle the data fetching and filtering here
+  const handleDropdownChange = (name, value) => {
+    setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
+  };
+
+  const handleTextChange = (name, value) => {
+    setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
   };
 
   return (
-    <div className="p-4 h-full overflow-y-auto">
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            State
-          </label>
-          <input
-            type="text"
-            value={state}
-            onChange={(e) => setState(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Geographic Stratum Code
-          </label>
-          <input
-            type="text"
-            value={geostratum}
-            onChange={(e) => setGeostratum(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Household Density Stratum Code
-          </label>
-          <input
-            type="text"
-            value={density}
-            onChange={(e) => setDensity(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Year Range
-          </label>
-          <input
-            type="range"
-            value={year.join(',')}
-            min="2000"
-            max="2024"
-            step="1"
-            onChange={handleSliderChange}
-            className="w-full"
-          />
-          <div className="flex justify-between text-gray-600 text-sm">
-            <span>{year[0]}</span>
-            <span>{year[1]}</span>
+    <div className="p-4">
+      <h1 className="text-2xl mb-4">GUI View</h1>
+      <div className="space-y-4">
+        {data.numericalAttributes.map((attr) => (
+          <div key={attr.name} className="flex items-center space-x-4">
+            <label className="w-32">{attr.name}</label>
+            <input
+              type="range"
+              min={attr.min}
+              max={attr.max}
+              value={filters[attr.name][0]}
+              onChange={(e) =>
+                handleSliderChange(attr.name, [
+                  Number(e.target.value),
+                  filters[attr.name][1]
+                ])
+              }
+              className="w-1/3"
+            />
+            <input
+              type="range"
+              min={attr.min}
+              max={attr.max}
+              value={filters[attr.name][1]}
+              onChange={(e) =>
+                handleSliderChange(attr.name, [
+                  filters[attr.name][0],
+                  Number(e.target.value)
+                ])
+              }
+              className="w-1/3"
+            />
+            <span>
+              {filters[attr.name][0]} - {filters[attr.name][1]}
+            </span>
           </div>
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Search Text
-          </label>
-          <input
-            type="text"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-
-        <div className="flex items-center justify-between">
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Filter Data
-          </button>
-        </div>
-      </form>
+        ))}
+        {data.categoricalAttributes.map((attr) => (
+          <div key={attr.name} className="flex items-center space-x-4">
+            <label className="w-32">{attr.name}</label>
+            <select
+              value={filters[attr.name]}
+              onChange={(e) => handleDropdownChange(attr.name, e.target.value)}
+              className="w-1/3"
+            >
+              <option value="">Select</option>
+              {attr.options.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+        ))}
+        {data.textAttributes.map((attr) => (
+          <div key={attr} className="flex items-center space-x-4">
+            <label className="w-32">{attr}</label>
+            <input
+              type="text"
+              value={filters[attr]}
+              onChange={(e) => handleTextChange(attr, e.target.value)}
+              className="w-1/3"
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
 
+export default GUIView;
