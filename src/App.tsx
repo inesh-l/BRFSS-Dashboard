@@ -4,9 +4,9 @@ import SQLEditor from "./components/SQLEditor";
 import Sider from "./components/Sider";
 import SideSelector from "./components/SideSelector";
 import ModeSelector from "./components/ModeSelector";
-import { useDuckDb } from 'duckdb-wasm-kit';
 
 import { execute_query, updateTableList } from "./lib/db/dbconn";
+import { useDuckDb } from "./lib/db/dbconn";
 
 import { RiDragMove2Line } from "react-icons/ri";
 
@@ -31,19 +31,15 @@ function App() {
     console.log(db);
   }
 
-
   // excuteQuery & updateTableList when send selectedCode
   useEffect(() => {
     if (!selectedCode) return;
     toast
-      .promise(
-        execute_query(db, selectedCode, setArrowFile, setLlmResult),
-        {
-          pending: "Excuting ...",
-          success: "Excuted 👌",
-          error: "Failed 🤯",
-        },
-      )
+      .promise(execute_query(db, selectedCode, setArrowFile, setLlmResult), {
+        pending: "Excuting ...",
+        success: "Excuted 👌",
+        error: "Failed 🤯",
+      })
       .then(() => {
         console.log("selectedCode", selectedCode);
         if (
@@ -58,8 +54,6 @@ function App() {
         }
       });
   }, [selectedCode]);
-
-
 
   return (
     <>
@@ -94,9 +88,13 @@ function App() {
         </PanelResizeHandle>
         <Panel>
           <PanelGroup direction="vertical">
-            <ModeSelector setGUIMode={setGUIMode}/>
+            <ModeSelector setGUIMode={setGUIMode} />
             <Panel defaultSize={55} minSize={5}>
-              {GUIMode ? <GUIView setSelectedCode={setSelectedCode} /> : <SQLEditor setSelectedCode={setSelectedCode} />}
+              {GUIMode ? (
+                <GUIView setSelectedCode={setSelectedCode} />
+              ) : (
+                <SQLEditor setSelectedCode={setSelectedCode} />
+              )}
             </Panel>
             <PanelResizeHandle className=" border-y text-sm">
               <RiDragMove2Line className=" w-full items-center justify-center text-gray-500" />
