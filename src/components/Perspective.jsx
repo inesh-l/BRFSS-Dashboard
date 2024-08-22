@@ -2,9 +2,9 @@
 import perspective from "https://cdn.jsdelivr.net/npm/@finos/perspective/dist/cdn/perspective.js";
 import { useEffect } from "react";
 
-const WORKER: any = perspective.worker();
+const WORKER = perspective.worker();
 
-export default function Perspective({ arrowFile }: { arrowFile: any | null }) {
+export default function Perspective({ arrowFile }) {
   useEffect(() => {
     if (!arrowFile) return;
     const loadPerspectiveViewer = async () => {

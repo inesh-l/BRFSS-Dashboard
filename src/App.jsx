@@ -17,14 +17,14 @@ import "react-toastify/dist/ReactToastify.css";
 import GUIView from "./components/GUIView";
 
 function App() {
-  const [arrowFile, setArrowFile] = useState<any[] | null>(null);
-  const [llmResult, setLlmResult] = useState<string | null>(null);
-  const [fileList, setFileList] = useState<string[]>([]);
-  const [tableList, setTableList] = useState<string[]>([]);
-  const [selectedCode, setSelectedCode] = useState<string>("");
-  const [fileFormData, setFileFormData] = useState<FormData | null>(null);
-  const [files, setFiles] = useState<File[]>([]);
-  const [GUIMode, setGUIMode] = useState<boolean>(true); // false for SQL input, true for GUI
+  const [arrowFile, setArrowFile] = useState(null);
+  const [llmResult, setLlmResult] = useState(null);
+  const [fileList, setFileList] = useState([]);
+  const [tableList, setTableList] = useState([]);
+  const [selectedCode, setSelectedCode] = useState("");
+  const [fileFormData, setFileFormData] = useState(null);
+  const [files, setFiles] = useState([]);
+  const [GUIMode, setGUIMode] = useState(true); // false for SQL input, true for GUI
 
   const { db, loading, error } = useDuckDb();
   if (db) {

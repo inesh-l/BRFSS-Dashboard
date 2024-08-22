@@ -5,13 +5,9 @@ import "ace-builds/src-noconflict/mode-mysql";
 import "ace-builds/src-noconflict/ext-language_tools";
 import "./sql_theme.css";
 
-type SQLEditorProps = {
-  setSelectedCode: (code: string) => void;
-};
-
-export default function SQLEditor({ setSelectedCode }: SQLEditorProps) {
+export default function SQLEditor({ setSelectedCode }) {
   // Ref type is adjusted to match the expected type from AceEditor
-  const aceEditorRef = useRef<any>(null);
+  const aceEditorRef = useRef(null);
 
   const executeSelectedCode = () => {
     const editor = aceEditorRef.current?.editor;
@@ -53,7 +49,7 @@ export default function SQLEditor({ setSelectedCode }: SQLEditorProps) {
   );
 }
 
-const exampleCode = `-- 1. upload description file for RAG 
+const exampleCode = `-- 1. upload description file for RAG
 CREATE TABLE ohbrfss22 AS SELECT * FROM 'ohbrfss22.csv';
 SELECT * FROM ohbrfss22;
 

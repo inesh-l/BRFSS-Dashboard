@@ -7,18 +7,6 @@ import { RiDeleteBin5Fill } from "react-icons/ri";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
-import { AsyncDuckDB } from "duckdb-wasm-kit";
-
-type SiderProps = {
-  fileList: string[];
-  tableList: string[];
-  llmResult: string | null;
-  setFileList: (fileList: { file: string }[]) => void;
-  setFileFormData: (formData: FormData) => void;
-  files: File[];
-  db: AsyncDuckDB;
-  DB_ENDPOINT: string;
-};
 
 export default function Sider({
   fileList,
@@ -28,15 +16,14 @@ export default function Sider({
   setFileFormData,
   files,
   db,
-}: SiderProps) {
+}) {
   const label = { inputProps: { "aria-label": "Switch demo" } };
-  const [llmstring, setLlmString] = useState<string>("");
-
+  const [llmstring, setLlmString] = useState("");
 
   // load llm result
   useEffect(() => {
     if (!llmResult) return;
-    setLlmString(llmResult)
+    setLlmString(llmResult);
   }, [llmResult]);
 
   return (
@@ -45,12 +32,10 @@ export default function Sider({
         <div className=" mx-auto pb-4 pt-8 text-lg">File List</div>
         <ul className=" mx-4 space-y-1 text-left text-gray-500 ">
           {fileList.map((file) => (
-            <li
-              className=" flex w-full items-center justify-between gap-1"
-            >
+            <li className=" flex w-full items-center justify-between gap-1">
               <button
                 onClick={(e) => {
-                  const target = e.target as HTMLButtonElement;
+                  const target = e.target;
                   navigator.clipboard.writeText(
                     // `media/files/${target.textContent}`,
                     `${target.textContent}`,
@@ -60,8 +45,7 @@ export default function Sider({
               >
                 {file}
               </button>
-              <div className=" mt-1 flex gap-2">
-              </div>
+              <div className=" mt-1 flex gap-2"></div>
             </li>
           ))}
         </ul>
@@ -75,7 +59,7 @@ export default function Sider({
             >
               <button
                 onClick={(e) => {
-                  const target = e.target as HTMLButtonElement;
+                  const target = e.target;
                   navigator.clipboard.writeText(
                     // `SELECT * FROM ${target.textContent};`,
                     `${target.textContent}`,
@@ -100,10 +84,14 @@ export default function Sider({
       </div>
       <div>
         <div className="flex items-center justify-between space-x-4 text-gray-500">
-        <DropFile setFileFormData={setFileFormData} files={files} fileList={fileList} db={db}/>
+          <DropFile
+            setFileFormData={setFileFormData}
+            files={files}
+            fileList={fileList}
+            db={db}
+          />
         </div>
       </div>
     </div>
   );
 }
- 

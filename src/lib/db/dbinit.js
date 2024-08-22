@@ -1,10 +1,10 @@
 import * as duckdb from "@duckdb/duckdb-wasm";
-import { AsyncDuckDB, DuckDBConfig } from "@duckdb/duckdb-wasm";
+import { AsyncDuckDB } from "@duckdb/duckdb-wasm";
 import { logElapsedTime } from "@holdenmatt/ts-utils";
 
-export let DEBUG: boolean | undefined;
+export let DEBUG;
 
-let DB: Promise<AsyncDuckDB> | undefined;
+let DB;
 
 /**
  * Initialize DuckDB, ensuring we only initialize it once.
@@ -12,10 +12,7 @@ let DB: Promise<AsyncDuckDB> | undefined;
  * @param debug If true, log DuckDB logs and elapsed times to the console.
  * @param config An optional DuckDBConfig object.
  */
-export default async function initializeDuckDb(options?: {
-  debug?: boolean;
-  config?: DuckDBConfig;
-}): Promise<AsyncDuckDB> {
+export default async function initializeDuckDb(options) {
   const { debug = false, config } = options || {};
   DEBUG = debug;
 
@@ -28,9 +25,7 @@ export default async function initializeDuckDb(options?: {
 /**
  * Initialize DuckDB with a browser-specific Wasm bundle.
  */
-const _initializeDuckDb = async (
-  config?: DuckDBConfig,
-): Promise<AsyncDuckDB> => {
+const _initializeDuckDb = async (config) => {
   const start = performance.now();
 
   // Select a bundle based on browser checks
@@ -38,7 +33,7 @@ const _initializeDuckDb = async (
   const bundle = await duckdb.selectBundle(JSDELIVR_BUNDLES);
 
   const worker_url = URL.createObjectURL(
-    new Blob([`importScripts("${bundle.mainWorker!}");`], {
+    new Blob([`importScripts("${bundle.mainWorker}");`], {
       type: "text/javascript",
     }),
   );
@@ -78,7 +73,7 @@ const _initializeDuckDb = async (
  * Typically `useDuckDB` is used in React components instead, but this
  * method provides access outside of React contexts.
  */
-export const getDuckDB = async (): Promise<AsyncDuckDB> => {
+export const getDuckDB = async () => {
   if (DB) {
     return DB;
   } else {
